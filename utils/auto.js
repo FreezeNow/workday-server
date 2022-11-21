@@ -6,7 +6,12 @@ const client = createClient();
 client.on('error', (err) => console.log('Redis Client Error', err));
 client.connect();
 const request = axios.create({
-  baseURL: `http://timor.tech`,
+  baseURL: `https://timor.tech`,
+  headers: {
+    'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8,',
+    'user-agent':
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
+  },
 });
 const setWorkday = async ({ day } = {}) => {
   const response = await request({
