@@ -8,11 +8,7 @@ const bodyParser = require('koa-bodyparser');
 const logger = require('koa-logger');
 const os = require('os');
 const { getNowTime } = require('./toolbox.js');
-const { createClient } = require('redis');
-const client = createClient();
-client.on('error', (err) => console.log('Redis Client Error', err));
 
-client.connect();
 
 // 创建koa实例
 const app = new Koa();
@@ -34,7 +30,6 @@ const server = {
       ctx.state.tokenList = ['test'];
       ctx.state.error = error;
       ctx.state.config = {};
-      ctx.state.redisClient = client;
       try {
         await next();
         const body = ctx.request.body;

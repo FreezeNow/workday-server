@@ -1,10 +1,7 @@
 const axios = require('axios');
 
 const dayjs = require('dayjs');
-const { createClient } = require('redis');
-const client = createClient();
-client.on('error', (err) => console.log('Redis Client Error', err));
-client.connect();
+const { setWorkdays, getWorkdays } = require('./workday');
 const request = axios.create({
   baseURL: `https://timor.tech`,
   headers: {
@@ -13,6 +10,7 @@ const request = axios.create({
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
   },
 });
+let workdays = {};
 const setWorkday = async ({ day } = {}) => {
   const response = await request({
     method: 'GET',
@@ -28,21 +26,23 @@ const setWorkday = async ({ day } = {}) => {
   switch (type.type) {
     case 0:
     case 3:
-      await client.set(day, 'true');
+      workdays[day] = 'true';
       break;
     case 1:
     case 2:
-      await client.set(day, 'false');
+      workdays[day] = 'false';
       break;
   }
+  setWorkdays(JSON.stringify(workdays));
 };
 const set30Workday = async () => {
+  workdays = {};
   try {
     for (let i = 0; i < 30; i++) {
       const day = dayjs().add(i, 'day').format('YYYY-MM-DD');
       await setWorkday({ day });
-      console.log(day, JSON.parse(await client.get(day)));
     }
+    console.log(JSON.parse(await getWorkdays()));
   } catch (error) {
     console.error(dayjs().format('YYYY-MM-DD HH:mm:ss'), '发生错误', error);
   }
