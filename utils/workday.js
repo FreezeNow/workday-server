@@ -1,11 +1,13 @@
 const { writeFile, readFile } = require('fs/promises');
 
 const getDay = async (date) => {
-  const workday = await readFile('./workdays.json');
+  const workdaySr = await readFile('./workdays.json', { encoding: 'utf8' });
+  const workday = JSON.parse(workdaySr);
   return workday[date];
 };
 const getWorkdays = async () => {
-  const workday = (await readFile('./workdays.json').catch(() => ({}))) ?? {};
+  const workdaySr = (await readFile('./workdays.json').catch(() => ({}))) ?? {};
+  const workday = JSON.parse(workdaySr);
   return workday;
 };
 
